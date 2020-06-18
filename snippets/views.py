@@ -1,9 +1,22 @@
 from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer
+from rest_framework import generics
+
+class SnippetList(generics.ListCreateAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
+
+
+class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
+
+# from snippets.models import Snippet
+# from snippets.serializers import SnippetSerializer
 # 封装的status code
-from rest_framework import status
+# from rest_framework import status
 # 封装的response
-from rest_framework.response import Response
+# from rest_framework.response import Response
 
 
 # request.POST  # Only handles form data.  Only works for 'POST' method.
@@ -161,37 +174,43 @@ from rest_framework.response import Response
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # version 4 mixin
-from rest_framework import mixins
-from rest_framework import generics
+# from rest_framework import mixins
+# from rest_framework import generics
 
-# 利用 Python 的多重继承，子类可以继承不同功能的 Mixin 类，按需动态组合使用。
-# 当多个类都实现了同一种功能时，这时应该考虑将该功能抽离成 Mixin 类。
-class SnippetList(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  generics.GenericAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
-    # *args就是就是传递一个可变参数列表给函数实参，这个参数列表的数目未知，甚至长度可以为0。
-    # 而**kwargs则是将一个可变的关键字参数的字典传给函数实参，同样参数列表长度可以为0或为其他值
-    # test_kwargs(1, 2, 3, 4, k1=5, k2=6)
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+# # 利用 Python 的多重继承，子类可以继承不同功能的 Mixin 类，按需动态组合使用。
+# # 当多个类都实现了同一种功能时，这时应该考虑将该功能抽离成 Mixin 类。
+# # 类似于ruby中的include 为class 添加实例方法
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+# class SnippetList(mixins.ListModelMixin,
+#                   mixins.CreateModelMixin,
+#                   generics.GenericAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+#     # *args就是就是传递一个可变参数列表给函数实参，这个参数列表的数目未知，甚至长度可以为0。
+#     # 而**kwargs则是将一个可变的关键字参数的字典传给函数实参，同样参数列表长度可以为0或为其他值
+#     # test_kwargs(1, 2, 3, 4, k1=5, k2=6)
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
 
-class SnippetDetail(mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
-                    mixins.DestroyModelMixin,
-                    generics.GenericAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+# class SnippetDetail(mixins.RetrieveModelMixin,
+#                     mixins.UpdateModelMixin,
+#                     mixins.DestroyModelMixin,
+#                     generics.GenericAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
+
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
+
+# version 5
+# REST framework provides a set of already mixed-in generic views that we can use to trim down our views.py module even more.
+
