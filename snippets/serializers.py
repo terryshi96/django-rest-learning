@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from snippets.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
-
+from django.contrib.auth.models import User
 # rest framework中真正的m层，实现数据的增删改查
 
 # 继承Serializer类 接收objects参数
 # 渲染为json格式 content = JSONRenderer().render(serializer.data) 
 # content需要使用JSONPaarser解析成dict
 
+# version 1
 # 和model弱关联
 # class SnippetSerializer(serializers.Serializer):
 #     id = serializers.IntegerField(read_only=True)
@@ -34,11 +35,35 @@ from snippets.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
 #         instance.save()
 #         return instance
 
-
+# version 2
 # concise写法，跟model强关联
 # An automatically determined set of fields.
 # Simple default implementations for the create() and update() methods.
-class SnippetSerializer(serializers.ModelSerializer):
+# class SnippetSerializer(serializers.ModelSerializer):
+#     # 只读字段
+#     owner = serializers.ReadOnlyField(source='owner.username')
+#     class Meta:
+#         model = Snippet
+#         fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner']
+
+# class UserSerializer(serializers.ModelSerializer):
+#     snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'snippets']
+
+# version 3 hyperlink
+class SnippetSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    highlight = serializers.HyperlinkedIdentityField(view_name='snippet-highlight', format='html')
     class Meta:
         model = Snippet
-        fields = ['id', 'title', 'code', 'linenos', 'language', 'style']
+        fields = ['url', 'id', 'highlight', 'owner',
+                  'title', 'code', 'linenos', 'language', 'style']
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    snippets = serializers.HyperlinkedRelatedField(many=True, view_name='snippet-detail', read_only=True)
+    class Meta:
+        model = User
+        fields = ['url', 'id', 'username', 'snippets']
