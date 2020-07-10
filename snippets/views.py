@@ -12,6 +12,8 @@ from rest_framework import renderers
 
 from rest_framework import viewsets
 
+#  版本越往后封装的程度越高，自定义的部分越少，根据需求使用不同封装程度的方式
+
 # version 6 使用view_set 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -53,31 +55,6 @@ class SnippetViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
-# version 5
-# REST framework provides a set of already mixed-in generic views that we can use to trim down our views.py module even more.
-
-# class SnippetList(generics.ListCreateAPIView):
-#     queryset = Snippet.objects.all()
-#     serializer_class = SnippetSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-#                       IsOwnerOrReadOnly]
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
-
-
-# class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-#                       IsOwnerOrReadOnly]
-#     queryset = Snippet.objects.all()
-#     serializer_class = SnippetSerializer
-
-# class UserList(generics.ListAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-# class UserDetail(generics.RetrieveAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
 
 # from snippets.models import Snippet
 # from snippets.serializers import SnippetSerializer
@@ -288,3 +265,43 @@ class SnippetViewSet(viewsets.ModelViewSet):
 #     def get(self, request, *args, **kwargs):
 #         snippet = self.get_object()
 #         return Response(snippet.highlighted)
+
+
+# version 5
+# REST framework provides a set of already mixed-in generic views that we can use to trim down our views.py module even more.
+
+# class SnippetList(generics.ListCreateAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#                       IsOwnerOrReadOnly]
+#     def perform_create(self, serializer):
+#         serializer.save(owner=self.request.user)
+
+
+# class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#                       IsOwnerOrReadOnly]
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+
+# class UserList(generics.ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+# class UserDetail(generics.RetrieveAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+# For more complex cases you might also want to override various methods on the view class. For example.
+
+# class UserList(generics.ListCreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = [IsAdminUser]
+
+#     def list(self, request):
+#         # Note the use of `get_queryset()` instead of `self.queryset`
+#         queryset = self.get_queryset()
+#         serializer = UserSerializer(queryset, many=True)
+#         return Response(serializer.data)
